@@ -26,15 +26,16 @@ Prototype Refactor
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
 
-function GameObject(object) {
+class GameObject {
+  constructor(gameObjectAttr) {
     this.createdAt = new Date();
-    this.name = object.name;
-    this.dimensions = object.dimensions;
+    this.name = gameObjectAttr.name;
+    this.dimensions = gameObjectAttr.dimensions;
+    this.destroy = function() {
+      return `${this.name} was removed from the game.`;
+    };
   };
-  
-  GameObject.prototype.destroy = function () {
-    return `${this.name} was removed from the game.`;
-  }
+};
   
   /*
     === CharacterStats ===
@@ -42,17 +43,16 @@ function GameObject(object) {
     * takeDamage() // prototype method -> returns the string '<object name> took damage.'
     * should inherit destroy() from GameObject's prototype
   */
-  
-  function CharacterStats(character) {
-    GameObject.call(this, character);
-    this.healthPoints = character.healthPoints;
+
+  class CharacterStats extends GameObject {
+    constructor(characterStatsAttr) {
+      super(characterStatsAttr);
+      this.healthPoints = characterStatsAttr.healthPoints;
+      this.takeDamage = function () {
+        return `${this.name} took damage.`;
+      };
+    };
   };
-  
-  CharacterStats.prototype = Object.create(GameObject.prototype);
-  
-  CharacterStats.prototype.takeDamage = function () {
-    return `${this.name} took damage.`;
-  }
   
   /*
     === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -63,18 +63,17 @@ function GameObject(object) {
     * should inherit destroy() from GameObject through CharacterStats
     * should inherit takeDamage() from CharacterStats
   */
-   
-  function Humanoid(human) {
-    CharacterStats.call(this, human);
-    this.team = human.team;
-    this.weapons = human.weapons;
-    this.language = human.language;
-  }
-  
-  Humanoid.prototype = Object.create(CharacterStats.prototype);
-  
-  Humanoid.prototype.greet = function () {
-    return `${this.name} offers a greeting in ${this.language}.`;
+
+  class Humanoid extends CharacterStats {
+    constructor(humanoidAttr) {
+      super(humanoidAttr);
+      this.team = humanoidAttr.team;
+      this.weapons = humanoidAttr.weapons;
+      this.language = humanoidAttr.language;
+      this.greet = function() {
+        return `${this.name} offers a greeting in ${this.language}.`;
+      }
+    }
   }
   
   /*
